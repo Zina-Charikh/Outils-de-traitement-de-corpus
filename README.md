@@ -22,12 +22,12 @@ Le "Textual-Image-Caption Dataset" peut être utilisé pour entraîner ou évalu
 <img src="corpus-ref.png" alt="corpus de référence" />
 
 Ce dataset contient trois colonnes :
-1. **Image ID**: Identifiant unique pour chaque image, généralement le nom du fichier.
-2. **Keywords** : Mots-clés ou tags qui résument les objets ou les concepts présents dans l'image.
-3. **Caption** : Description textuelle complète de ce que montre l'image, utilisée pour le légendage.
+1. **ID**: Identifiant unique pour chaque image, généralement le nom du fichier.
+2. **visual** : Mots-clés ou tags qui résument les objets ou les concepts présents dans l'image.
+3. **caption** : Description textuelle complète de ce que montre l'image, utilisée pour le légendage.
 Ce type de dataset est couramment utilisé pour les tâches de légendage automatique d'images, où le but est de développer des modèles capables de comprendre le contenu visuel d'une image et de le décrire en phrases naturelles, il est donc utilisé pour l'entraînement et l'évaluation de systèmes de légendage automatique d'images.
 
-- **Modèle entraînés avec ce corpus**: Bien qu'on puisse utiliser divers modèles pour cette tâche, un modèle comme `ydshieh/vit-gpt2-coco-en` sur Hugging Face a été mentionné. Ce modèle combine ViT (Vision Transformer) pour la compréhension d'image et GPT-2 pour la génération de texte, optimi
+- **Modèle entraînés avec ce corpus**: Bien qu'on puisse utiliser divers modèles pour cette tâche, un modèle comme `ydshieh/vit-gpt2-coco-en` sur Hugging Face a été mentionné. Ce modèle combine ViT (Vision Transformer) pour la compréhension d'image et GPT-2 pour la génération de texte.
 
 - **Autres modèles**: Des architectures comme Transformer ont été utilisées pour ce type de tâche. Des modèles spécifiques incluent `OpenAI's CLIP` associé à des modèles de génération de texte comme GPT, ou `Google's BERT` associé à des modèles de vision, tels que ResNet.
 
@@ -38,3 +38,5 @@ Ce type de dataset est couramment utilisé pour les tâches de légendage automa
 2. **Multi30k**: Ce dataset offre des descriptions non seulement en anglais mais aussi en allemand, français et tchèque.
 
 3. **STAIR**: Un corpus de légendage d'images en japonais.
+
+
