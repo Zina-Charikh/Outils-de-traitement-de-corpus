@@ -8,7 +8,7 @@
 ## Corpus choisi: Textual-Image-Caption Dataset par AhmedSSabir
 On peut retrouver le texte sur HuggingFace, comme on peut le retrouver sur le dépôt de l'auteur https://github.com/ahmedssabir/Textual-Visual-Semantic-Dataset publié sous le titre **Visual Semantic Relatedness Dataset for Image Captioning** par Ahmed Sabir, Francesc Moreno-Noguer, Lluís Padró dans arXiv (Cornell Universiy) - voici le lien : https://arxiv.org/pdf/2301.08784 - en 2023.
 - **Sources des données** : **COCO Captions** : Le corpus utilise et étend le dataset COCO Captions (connu dans la communauté de vision par ordinateur et de traitement du langage naturel.)
-
+- **Taille du corpus**: Sur les fichiers TSV publiés, la paartie train contient 59 lignes, tandis que la partie test en contient 11.
 
 @article{sabir2023visual,
   title={Visual Semantic Relatedness Dataset for Image Captioning},
