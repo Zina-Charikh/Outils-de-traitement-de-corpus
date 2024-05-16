@@ -29,14 +29,14 @@ test['bleu_score'] = test.apply(
 )
 
 # Sauvegarde des légendes générées et des scores BLEU dans un fichier CSV
-results_path = '../../plots/generated_captions_evaluation.csv'
+results_path = '../../results/generated_captions_evaluation.csv'
 test[['caption', 'generated_caption', 'bleu_score']].to_csv(results_path, index=False)
 
 # Calcul de la moyenne du score BLEU
 mean_bleu_score = np.mean(test['bleu_score'])
 
 # Enregistrement des résultats statistiques et explication du score BLEU dans le fichier stats.txt
-with open('../../plots/stats.txt', 'a') as file:
+with open('../../results/evaluation.txt', 'a') as file:
     file.write(f"Moyenne du score BLEU pour l'évaluation: {mean_bleu_score:.4f}\n")
     file.write("Explication du score BLEU :\n")
     file.write("Le score BLEU évalue la qualité des traductions automatiques en comparant les phrases générées avec des références pré-établies sur la base des n-grammes correspondants. ")
