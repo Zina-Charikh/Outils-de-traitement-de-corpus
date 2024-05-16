@@ -1,0 +1,4 @@
+Moyenne de la longueur des légendes: 15.94 mots
+Diversité lexicale: 77.72%
+Similarité moyenne avec 'animal': 0.7311
+Distribution des parties du discours: {'PROPN': 184, 'NOUN': 120, 'ADV': 8, 'VERB': 36, 'ADJ': 43, 'ADP': 2, 'NUM': 1, 'X': 1}

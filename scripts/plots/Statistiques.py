@@ -1,85 +1,109 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-from collections import Counter
 import spacy
+from collections import Counter
+import numpy as np
+import matplotlib.pyplot as plt
+import gensim.downloader as api
+from scipy.spatial import distance
 
-# Chargement du modèle linguistique SpaCy pour l'anglais
+# Initialisation de SpaCy pour l'analyse linguistique en anglais
 nlp = spacy.load('en_core_web_sm')
 
-# Chargement des données à partir du fichier CSV
+# Chargement des données depuis un fichier CSV
 data_path = '../../data/clean/animal_images_cleaned.csv'
 data = pd.read_csv(data_path)
 
-# Analyse linguistique pour extraire les fréquences des mots en excluant les stopwords
-def process_captions(data):
-    all_words = []
-    for doc in nlp.pipe(data['caption'].astype(str)):
-        all_words.extend([token.text.lower() for token in doc if not token.is_stop and token.is_alpha])
-    return all_words
+def analyser_legends(data):
+    """
+    Analyse les légendes pour calculer les fréquences des mots, la diversité lexicale et la distribution des parties de discours.
+    """
+    mots_tous = []
+    longueurs_mots = []
+    comptage_pos = Counter()
+    mots_uniques = set()
+    total_mots = 0
 
-all_words = process_captions(data)
-word_freq = Counter(all_words)
+    for legende in data['caption']:
+        doc = nlp(legende)
+        tokens = [token for token in doc if token.is_alpha and not token.is_stop]
+        mots_tous.extend([token.text.lower() for token in tokens])
+        longueurs_mots.extend([len(token.text) for token in tokens])
+        comptage_pos.update([token.pos_ for token in tokens])
+        mots_uniques.update([token.text.lower() for token in tokens])
+        total_mots += len(tokens)
 
-# Statistiques descriptives
-def compute_statistics(data, word_freq):
-    # Longueur moyenne des légendes en mots
-    data['caption_length'] = data['caption'].apply(lambda x: len(x.split()))
-    avg_length = data['caption_length'].mean()
+    data['longueur_caption'] = data['caption'].apply(lambda x: len(x.split()))
+    moyenne_longueur = np.mean(data['longueur_caption'])
+    diversite_lex = len(mots_uniques) / total_mots if total_mots > 0 else 0
 
-    # Diversité lexicale
-    lex_div = len(set(all_words)) / len(all_words) if all_words else 0
+    return mots_tous, moyenne_longueur, diversite_lex, comptage_pos
 
-    # Mots les plus fréquents
-    common_words = word_freq.most_common(10)
+# Analyse des légendes
+mots, moyenne_longueur, diversite_lex, distribution_pos = analyser_legends(data)
 
-    return avg_length, lex_div, common_words
+# Chargement du modèle Word2Vec
+word_vectors = api.load("glove-wiki-gigaword-100")
 
-avg_length, diversity, common_words = compute_statistics(data, word_freq)
+def calculer_similarite(data, mot_cle='animal'):
+    """
+    Calcule la similarité moyenne entre les légendes et un mot-clé spécifié.
+    """
+    similarites = []
+    for legende in data['caption']:
+        doc = nlp(legende)
+        mots = [token.text.lower() for token in doc if token.is_alpha and token.text.lower() in word_vectors.key_to_index]
+        distances = [distance.cosine(word_vectors[mot], word_vectors[mot_cle]) for mot in mots if mot in word_vectors]
+        similarites.append(np.mean(distances))
+    return np.mean(similarites) if similarites else 0
 
-# Affichage des résultats calculés
-print(f"Moyenne de la longueur des captions: {avg_length:.2f} mots")
-print(f"Diversité lexicale: {diversity:.2%}")
-print(f"Mots les plus fréquents: {common_words}")
+similarite_moyenne = calculer_similarite(data)
+
+# Enregistrement des résultats
+with open('../../plots/stats.txt', 'w') as fichier:
+    fichier.write(f"Moyenne de la longueur des légendes: {moyenne_longueur:.2f} mots\n")
+    fichier.write(f"Diversité lexicale: {diversite_lex:.2%}\n")
+    fichier.write(f"Similarité moyenne avec 'animal': {similarite_moyenne:.4f}\n")
+    fichier.write(f"Distribution des parties du discours: {dict(distribution_pos)}\n")
 
 # Visualisation de la distribution de la longueur des légendes
 plt.figure(figsize=(10, 6))
-plt.hist(data['caption_length'], bins=range(0, 160, 10), color='skyblue', edgecolor='black')
-plt.title('Distribution de la longueur des captions')
-plt.xlabel('Longueur des captions (en mots)')
+plt.hist(data['longueur_caption'], bins=range(0, 160, 10), color='skyblue', edgecolor='black')
+plt.title('Distribution de la longueur des légendes')
+plt.xlabel('Longueur des légendes (en mots)')
 plt.ylabel('Fréquence')
 plt.xticks(range(0, 160, 10))
 plt.grid(True)
-plt.savefig('../../plots/caption_length_distribution.png')
-plt.show()
+plt.savefig('../../plots/distribution_longueur_legende.png')
+plt.close()
 
 # Visualisation de la loi de Zipf
-freqs = sorted(word_freq.values(), reverse=True)
+freq_mots = Counter(mots)
+frequences = sorted(freq_mots.values(), reverse=True)
 plt.figure(figsize=(10, 6))
-plt.plot(range(len(freqs)), freqs, linestyle='-', marker='')
+plt.plot(range(len(frequences)), frequences, linestyle='-', marker='')
 plt.title('Loi de Zipf - Distribution des fréquences des mots')
 plt.xlabel('Rang du mot')
 plt.ylabel('Fréquence')
 plt.yscale('log')
 plt.xscale('log')
 plt.grid(True)
-plt.savefig('../../plots/zipf_distribution_improved.png')
-plt.show()
+plt.savefig('../../plots/distribution_zipf.png')
+plt.close()
 
-# Visualisation des mots les plus fréquents
-words, counts = zip(*word_freq.most_common(50))
+# Visualisation des 50 mots les plus fréquents
+mots_frequents = freq_mots.most_common(50)
+mots, frequences = zip(*mots_frequents)
 plt.figure(figsize=(12, 8))
-plt.barh(range(len(words)), counts, color='skyblue')
-plt.yticks(range(len(words)), words)
-plt.gca().invert_yaxis()
+plt.barh(mots, frequences, color='skyblue')
+plt.gca().invert_yaxis()  # Inverser l'axe y pour mettre le mot le plus fréquent en haut
 plt.title('Top 50 des mots les plus fréquents')
 plt.xlabel('Fréquence')
-plot_path = '../../plots/word_frequency_top_50.png'
-plt.savefig(plot_path)
-plt.show()
+plt.savefig('../../plots/top_50_words.png')
+plt.close()
 
-# Visualisation de la diversité lexicale avec un diagramme circulaire
+# Visualisation de la diversité lexicale
 labels = 'Diversité lexicale', 'Autres'
-sizes = [diversity, 1 - diversity]
+sizes = [diversite_lex, 1 - diversite_lex]
 colors = ['skyblue', 'lightgrey']
 explode = (0.1, 0)
 plt.figure(figsize=(6, 6))
@@ -87,4 +111,4 @@ plt.pie(sizes, explode=explode, labels=labels, colors=colors,
         autopct='%1.1f%%', shadow=True, startangle=140)
 plt.title('Diversité lexicale')
 plt.savefig('../../plots/lexical_diversity.png')
-plt.show()
+plt.close()
