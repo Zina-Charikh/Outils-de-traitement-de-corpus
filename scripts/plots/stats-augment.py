@@ -40,7 +40,7 @@ train['augmented_caption'] = train['caption'].apply(augment_caption)
 train['longueur_augmented'] = train['augmented_caption'].apply(lambda x: len(x.split()))
 
 # Sauvegarde des légendes augmentées
-augmented_data_path = '../../data/augmented/augmented_captions.csv'
+augmented_data_path = '../../results/augmented_captions.csv'
 train[['caption', 'augmented_caption']].to_csv(augmented_data_path, index=False)
 
 # Analyse statistique

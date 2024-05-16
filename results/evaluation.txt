@@ -1,0 +1,3 @@
+Moyenne du score BLEU pour l'évaluation: 0.0514
+Explication du score BLEU :
+Le score BLEU évalue la qualité des traductions automatiques en comparant les phrases générées avec des références pré-établies sur la base des n-grammes correspondants. Il applique une pénalité pour les textes générés courts, ce qui peut conduire à des scores plus bas même lorsque les mots sont corrects mais dans un ordre différent. Un score de 1.0 signifie une correspondance parfaite tandis qu'un score de 0.0 indique aucune correspondance. Un score BLEU plus élevé indique une meilleure correspondance avec les textes de référence.
