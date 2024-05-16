@@ -14,11 +14,8 @@ data_path = '../../data/clean/animal_images_cleaned.csv'
 data = pd.read_csv(data_path)
 
 def analyser_legends(data):
-    """
-    Analyse les légendes pour calculer les fréquences des mots, la diversité lexicale et la distribution des parties de discours.
-    """
     mots_tous = []
-    longueurs_mots = []
+    longueurs_legende = []
     comptage_pos = Counter()
     mots_uniques = set()
     total_mots = 0
@@ -27,43 +24,47 @@ def analyser_legends(data):
         doc = nlp(legende)
         tokens = [token for token in doc if token.is_alpha and not token.is_stop]
         mots_tous.extend([token.text.lower() for token in tokens])
-        longueurs_mots.extend([len(token.text) for token in tokens])
+        longueurs_legende.append(len(legende.split()))
         comptage_pos.update([token.pos_ for token in tokens])
         mots_uniques.update([token.text.lower() for token in tokens])
         total_mots += len(tokens)
 
-    data['longueur_caption'] = data['caption'].apply(lambda x: len(x.split()))
+    data['longueur_caption'] = longueurs_legende  # Update directly in data DataFrame
     moyenne_longueur = np.mean(data['longueur_caption'])
+    ecart_type_longueur = np.std(data['longueur_caption'])
+    max_longueur = max(data['longueur_caption'])
+    min_longueur = min(data['longueur_caption'])
     diversite_lex = len(mots_uniques) / total_mots if total_mots > 0 else 0
 
-    return mots_tous, moyenne_longueur, diversite_lex, comptage_pos
+    return moyenne_longueur, ecart_type_longueur, max_longueur, min_longueur, diversite_lex, comptage_pos, mots_tous
 
-# Analyse des légendes
-mots, moyenne_longueur, diversite_lex, distribution_pos = analyser_legends(data)
+# Execute analysis function and keep the returned variables
+moyenne_longueur, ecart_type_longueur, max_longueur, min_longueur, diversite_lex, distribution_pos, mots = analyser_legends(data)
 
 # Chargement du modèle Word2Vec
 word_vectors = api.load("glove-wiki-gigaword-100")
 
 def calculer_similarite(data, mot_cle='animal'):
-    """
-    Calcule la similarité moyenne entre les légendes et un mot-clé spécifié.
-    """
     similarites = []
     for legende in data['caption']:
         doc = nlp(legende)
-        mots = [token.text.lower() for token in doc if token.is_alpha and token.text.lower() in word_vectors.key_to_index]
-        distances = [distance.cosine(word_vectors[mot], word_vectors[mot_cle]) for mot in mots if mot in word_vectors]
+        mots_legende = [token.text.lower() for token in doc if token.is_alpha and token.text.lower() in word_vectors.key_to_index]
+        distances = [distance.cosine(word_vectors[mot], word_vectors[mot_cle]) for mot in mots_legende if mot in word_vectors]
         similarites.append(np.mean(distances))
     return np.mean(similarites) if similarites else 0
 
-similarite_moyenne = calculer_similarite(data)
+similarite_moyenne = calculer_similarite(data, "animal")
 
 # Enregistrement des résultats
 with open('../../plots/stats.txt', 'w') as fichier:
     fichier.write(f"Moyenne de la longueur des légendes: {moyenne_longueur:.2f} mots\n")
+    fichier.write(f"Écart-type de la longueur des légendes: {ecart_type_longueur:.2f}\n")
+    fichier.write(f"Longueur maximale de légende: {max_longueur}\n")
+    fichier.write(f"Longueur minimale de légende: {min_longueur}\n")
     fichier.write(f"Diversité lexicale: {diversite_lex:.2%}\n")
     fichier.write(f"Similarité moyenne avec 'animal': {similarite_moyenne:.4f}\n")
     fichier.write(f"Distribution des parties du discours: {dict(distribution_pos)}\n")
+
 
 # Visualisation de la distribution de la longueur des légendes
 plt.figure(figsize=(10, 6))

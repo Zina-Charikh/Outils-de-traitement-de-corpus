@@ -1,4 +1,7 @@
 Moyenne de la longueur des légendes: 15.94 mots
+Écart-type de la longueur des légendes: 25.12
+Longueur maximale de légende: 148
+Longueur minimale de légende: 1
 Diversité lexicale: 77.72%
 Similarité moyenne avec 'animal': 0.7311
 Distribution des parties du discours: {'PROPN': 184, 'NOUN': 120, 'ADV': 8, 'VERB': 36, 'ADJ': 43, 'ADP': 2, 'NUM': 1, 'X': 1}
