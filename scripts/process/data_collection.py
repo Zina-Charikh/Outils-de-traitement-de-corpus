@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import os
 
-def fetch_animal_images(limit=38):
+def fetch_animal_images(limit=40):
     URL = "https://commons.wikimedia.org/w/api.php"
     PARAMS = {
         "action": "query",
