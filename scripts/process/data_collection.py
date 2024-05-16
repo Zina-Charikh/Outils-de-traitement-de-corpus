@@ -51,7 +51,7 @@ def download_image(image_url, image_id):
     try:
         response = requests.get(image_url, headers=headers)
         if response.status_code == 200:
-            file_path = os.path.join('../data/raw/images', f'{image_id}.jpg')
+            file_path = os.path.join('../../data/raw/images', f'{image_id}.jpg')
             with open(file_path, 'wb') as f:
                 f.write(response.content)
             # Tenter d'ouvrir l'image avec Pillow pour vérifier sa validité
@@ -74,11 +74,11 @@ def save_to_csv(images, file_path):
     df.to_csv(file_path, index=False, encoding='utf-8') 
 
 def main():
-    images_directory = '../data/raw/images'
+    images_directory = '../../data/raw/images'
     if not os.path.exists(images_directory):
         os.makedirs(images_directory)
     images = fetch_animal_images()
-    data_directory = '../data/raw'
+    data_directory = '../../data/raw'
     if not os.path.exists(data_directory):
         os.makedirs(data_directory)
     file_path = os.path.join(data_directory, 'animal_images_wikimedia.csv')

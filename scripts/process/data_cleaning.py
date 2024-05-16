@@ -19,8 +19,8 @@ def extract_visual_name(url):
     return name.strip()
 
 def main():
-    input_dir = '../data/raw'
-    output_dir = '../data/clean'
+    input_dir = '../../data/raw'
+    output_dir = '../../data/clean'
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(os.path.join(output_dir, 'images'), exist_ok=True)
 
