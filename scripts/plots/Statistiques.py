@@ -56,7 +56,7 @@ def calculer_similarite(data, mot_cle='animal'):
 similarite_moyenne = calculer_similarite(data, "animal")
 
 # Enregistrement des résultats
-with open('../../plots/stats.txt', 'w') as fichier:
+with open('../../plots/stats.txt', 'a') as fichier:
     fichier.write(f"Moyenne de la longueur des légendes: {moyenne_longueur:.2f} mots\n")
     fichier.write(f"Écart-type de la longueur des légendes: {ecart_type_longueur:.2f}\n")
     fichier.write(f"Longueur maximale de légende: {max_longueur}\n")
