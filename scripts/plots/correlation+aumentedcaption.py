@@ -1,18 +1,21 @@
-import pandas as pd
 import numpy as np
 import scipy.stats as stats
 import matplotlib.pyplot as plt
 from nltk.corpus import wordnet
 import random
 from sklearn.model_selection import train_test_split
+from datasets import load_from_disk
 
 # Fixer la seed pour la reproductibilité
 random.seed(42)
 np.random.seed(42)
 
-# Chargement des données
-data_path = '../../data/clean/animal_images_cleaned.csv'
-data = pd.read_csv(data_path)
+# Chargement des données depuis un dataset sauvegardé
+dataset_path = '../../dataset'  #
+data = load_from_disk(dataset_path)
+
+# Conversion du dataset Hugging Face en DataFrame pandas pour une manipulation plus aisée
+data = data.to_pandas()
 
 # Calcul de la longueur de chaque légende
 data['longueur_caption'] = data['caption'].apply(lambda x: len(x.split()))
@@ -52,9 +55,10 @@ plt.title('Corrélation entre longueur des légendes originales et augmentées')
 plt.xlabel('Longueur originale')
 plt.ylabel('Longueur augmentée')
 plt.grid(True)
-plt.savefig('../../plots/correlation_augmented_plot.png')
+plt.savefig('../../results/correlation_augmented_plot.png')
 
 # Enregistrement des résultats statistiques
 with open('../../plots/stats.txt', 'a') as fichier:
     fichier.write(f"\nNombre de légendes après élimination des aberrations: {len(data_filtered)}\n")
     fichier.write(f"Corrélation entre légendes originales et augmentées: {correlation}, P-value: {p_value}\n")
+

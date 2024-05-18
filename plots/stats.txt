@@ -5,3 +5,14 @@ Longueur minimale de légende: 1
 Diversité lexicale: 77.72%
 Similarité moyenne avec 'animal': 0.7311
 Distribution des parties du discours: {'PROPN': 184, 'NOUN': 120, 'ADV': 8, 'VERB': 36, 'ADJ': 43, 'ADP': 2, 'NUM': 1, 'X': 1}
+
+Nombre de légendes après élimination des aberrations: 31
+Corrélation entre légendes originales et augmentées: 1.0, P-value: 0.0
+Taille de l'ensemble d'entraînement (train): 28
+Taille de l'ensemble de validation (dev): 3
+Taille de l'ensemble de test: 4
+Moyenne de la longueur des légendes: 15.00
+Écart-type de la longueur des légendes dans l'ensemble de test': 8.57
+Longueur maximale des légendes dans l'ensemble de test: 29
+Longueur minimale des légendes dans l'ensemble de test: 8
+Diversité lexicale dans l'ensemble de test: 89.13%
