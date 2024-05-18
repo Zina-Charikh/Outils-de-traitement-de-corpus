@@ -1,17 +1,20 @@
-import pandas as pd
 import spacy
 from collections import Counter
 import numpy as np
 import matplotlib.pyplot as plt
 import gensim.downloader as api
 from scipy.spatial import distance
+from datasets import load_from_disk
 
 # Initialisation de SpaCy pour l'analyse linguistique en anglais
 nlp = spacy.load('en_core_web_sm')
 
-# Chargement des données depuis un fichier CSV
-data_path = '../../data/clean/animal_images_cleaned.csv'
-data = pd.read_csv(data_path)
+# Chargement des données depuis un dataset sauvegardé
+dataset_path = '../../dataset'  # Assurez-vous que ce chemin est correct
+data = load_from_disk(dataset_path)
+
+# Conversion du Dataset Hugging Face en DataFrame pandas
+data = data.to_pandas()
 
 def analyser_legends(data):
     mots_tous = []
@@ -29,7 +32,7 @@ def analyser_legends(data):
         mots_uniques.update([token.text.lower() for token in tokens])
         total_mots += len(tokens)
 
-    data['longueur_caption'] = longueurs_legende  # Update directly in data DataFrame
+    data['longueur_caption'] = longueurs_legende
     moyenne_longueur = np.mean(data['longueur_caption'])
     ecart_type_longueur = np.std(data['longueur_caption'])
     max_longueur = max(data['longueur_caption'])
@@ -64,7 +67,6 @@ with open('../../plots/stats.txt', 'a') as fichier:
     fichier.write(f"Diversité lexicale: {diversite_lex:.2%}\n")
     fichier.write(f"Similarité moyenne avec 'animal': {similarite_moyenne:.4f}\n")
     fichier.write(f"Distribution des parties du discours: {dict(distribution_pos)}\n")
-
 
 # Visualisation de la distribution de la longueur des légendes
 plt.figure(figsize=(10, 6))
